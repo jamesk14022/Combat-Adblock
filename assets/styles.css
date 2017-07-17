@@ -3,9 +3,47 @@
 	padding-top: 20px;
 }
 
-#exTab2 textarea{
-	width: 300px;
+#exTab2 textarea.textarea-code{
+	width: 400px;
 	height: 300px;
+}
+
+#exTab2 textarea.textarea-alert{
+	width: 300px;
+	height: 100px;
+}
+
+#exTab2 input.txt-url{
+	width: 400px;
+}
+
+#exTab2 .tab-pane{
+	margin-top: 20px;
+	padding: 30px;
+	padding-top: 10px;
+	max-width: 950px;
+}
+
+#exTab2 .tab-pane td{
+	float: right;
+}
+
+#exTab2 .tab-pane td p.label-hint{
+	float: right;
+	color: #979899;
+}
+
+#exTab2 .tab-pane input.check-global-lock{
+	float: right;
+	display: block;
+}
+
+#exTab2 .button-primary{
+	float: right;
+}
+
+td.label-hint{
+	display: block;
 }
 
 #myChart{
@@ -16,3 +54,4 @@ button.btn-clear-data{
 	float: right;
 	margin-top: 10px;
 }
+

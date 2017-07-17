@@ -108,16 +108,14 @@ function ca_inline_banner_js($content, $ajaxurl){
 //load js required for alert based adblocking
 function ca_alert_js($content, $alert_text, $ajaxurl, $redirect, $redirect_url){
 	echo "<div style=\"display: none;\" class=\"ca-cont\">
-	$content
+		$content
 	</div>
 	<script>
 	// Function called if AdBlock is not detected
 	function adBlockNotDetected() {
 		con_div = document.getElementsByClassName('ca-cont');
-		warn_div = document.getElementsByClassName('ca-warn');
-		for(i = 0; i < con_div.length + 1; i++){
+		for(i = 0; i < con_div.length; i++){
 			con_div[i].style.display = 'block';
-			warn_div[i].style.display = 'none';
 		}
 	}
 
@@ -170,7 +168,7 @@ function ca_load_admin_body(){
 
 	<div class="wrap">
 	<h1 class="ca_title"><?=  esc_html(get_admin_page_title()); ?></h1>
-	<div id="exTab2" class="container">	
+	<div id="exTab2">	
 		<ul class="nav nav-tabs">
 			<li class="active"><a  href="#1" data-toggle="tab">Overview</a></li>
 			<li><a href="#2" data-toggle="tab">Statistics</a></li>
@@ -191,27 +189,28 @@ function ca_load_admin_body(){
 				$option4 = get_option('ca_alert_redirect');
 				$option5 = get_option('ca_alert_redirect_url');
 				$option6 = get_option('ca_global_lock');
-				$option3 = wp_parse_args(get_option('ca_inline_banner_code'), $banner_default);					
+				$option3 = wp_parse_args(get_option('ca_inline_banner_code'), $banner_default);
+
 			?>
-			<table class="form-table">
+			<table class="form-table ca-form-table">
 				<tr valign="top"><th scope="row">How would you like Adblock content warnings to appear?</th>
 	                <td><p>As an inline banner</p></td><td><input type="radio" name="ca_alert_type[type]" value="radio-inline" <?php checked('radio-inline', $option1['type']); ?>/></td>
 	                <td><p>As an alert box</p></td><td><input type="radio" name="ca_alert_type[type]" value="radio-alert" <?php checked('radio-alert', $option1['type']); ?>/></td>
 				</tr>
 				<tr valign="top"><th scope="row">Enter alert text here if you're using an alert box</th>
-	                <td><input type="text" name="ca_alert_text[text]" value="<?php echo $option2['text']; ?>"/></td>
+	                <td><textarea class="textarea-alert" type="text" name="ca_alert_text[text]"><?php echo $option2['text']; ?></textarea></td>
 				</tr>
-				<tr valign="top"><th scope="row">Redirect after alert (default url is homepage)</th>
+				<tr valign="top"><th scope="row">Redirect after alert</th>
 	                <td><input type="checkbox" name="ca_alert_redirect[type]" value="checkbox-redirect" <?php checked(isset($option4['type'])); ?>/></td>
 				</tr>
-				<tr valign="top"><th scope="row">Custom redirect URL</th>
-	                <td><input type="text" name="ca_alert_redirect_url[text]" value="<?php echo $option5['text']; ?>"/></td>
+				<tr valign="top"><th scope="row">Custom redirect URL </th>
+	                <td><input class="txt-url" type="text" name="ca_alert_redirect_url[text]" value="<?php echo $option5['text']; ?>"/><br><p class="label-hint">(default is homepage)</p></td>
 				</tr>
 				<tr valign="top"><th scope="row">Toggle Global Lock on all content</th>
-	                <td><input type="checkbox" name="ca_global_lock[type]" value="checkbox-global-lock" <?php checked(isset($option6['type'])); ?>/></td>
+	                <td><input class="check-global-lock" type="checkbox" name="ca_global_lock[type]" value="checkbox-global-lock" <?php checked(isset($option6['type'])); ?>/><br><p class="label-hint">If enabled, please ensure no [combat-adblock] short <br> codes are present in the site, they will be redundant.</p></td>
 				</tr>
 				<tr valign="top"><th scope="row">Inline Banner HTML/CSS</th>
-	                <td><textarea name="ca_inline_banner_code[text]"><?php echo esc_html($option3['text']); ?></textarea></td>
+	                <td><textarea class="textarea-code" name="ca_inline_banner_code[text]"><?php echo esc_html($option3['text']); ?></textarea><br><p class="label-hint">HTML/CSS OK</p></td>
 				</tr>
 	        </table>
 	            <?php submit_button('Save Settings'); ?>
