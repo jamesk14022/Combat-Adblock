@@ -4,32 +4,68 @@ Plugin Name: Combat-Adblock
 Plugin URI: 
 Description: Stop adblockers taking advantage of your premium content.
 Author: James Kingsbury
-Version: 1.0
+Version: 0.9
 Author URI: 
 */
 
 	//setup shortcode so user can use enclosing tags to protect premium content
+	//returns js specific to the admin options and this js either shows the user
+	//a predefined adblocker warning(and blocks content), or alt if no adblovker 
+	//is detected, no warning is shown
 	function ca_shortcode_init(){
-		function ca_shortcode($atts, $content = null){
+		function ca_shortcode($atts = [], $content = null){
 			if(get_option('ca_alert_type')['type'] == 'radio-alert'){
-				//certainly a better way to do this
-				isset(get_option('ca_alert_text')['text']) ? $alert_text =  get_option('ca_alert_text')['text'] :  $alert_text = ca_default_alert_text();
-				if(isset(get_option('ca_alert_redirect')['type'])){
-					//add support for custom redirect
-					!empty(get_option('ca_alert_redirect_url')['text']) ? $redirect_url =  get_option('ca_alert_redirect_url')['text'] :  $redirect_url = ca_default_redirect_url();
-					return ca_alert_js($content, $alert_text, admin_url( 'admin-ajax.php'), true, $redirect_url);
-				}else{
-					return ca_alert_js($content, $alert_text, admin_url( 'admin-ajax.php'), false, '');
-				}
-
+				return ca_alert($content);
+			}elseif(get_option('ca_alert_type')['type'] == 'radio-modal'){
+				return ca_modal($content);
 			}else{
-				//add case - (this is going to break if only whitespace is stored in the db) - user will be confused af
-				$banner_default  = array('text' => ca_default_inline_banner());
-				$warn_html = wp_parse_args(get_option('ca_inline_banner_code', $banner_default))['text'];
-				return $warn_html . ca_inline_banner_js($content, admin_url( 'admin-ajax.php' ));
+				return ca_banner($content);
 			}
 		}
 		add_shortcode('combat-adblock', 'ca_shortcode');
+	}
+
+	//returns js alert code with admin defined message
+	function ca_alert($content){
+		//executed if alert is wanted
+		isset(get_option('ca_alert_text')['text']) ? $alert_text =  get_option('ca_alert_text')['text'] :  $alert_text = ca_default_alert_text();
+		
+		if(isset(get_option('ca_alert_redirect')['type'])){
+			//add support for custom redirect
+			!empty(get_option('ca_alert_redirect_url')['text']) ? $redirect_url =  get_option('ca_alert_redirect_url')['text'] :  $redirect_url = ca_default_redirect_url();
+			return ca_alert_js($content, $alert_text, admin_url( 'admin-ajax.php'), true, $redirect_url);
+		}else{
+			return ca_alert_js($content, $alert_text, admin_url( 'admin-ajax.php'), false, '');
+		}
+	}
+
+	//retunrn js banner code with prefedined html/css or default
+	function ca_banner($content){
+		//executed if only inline banner is wanted
+		if(ctype_space(get_option('ca_inline_banner_code')['text']) || get_option('ca_inline_banner_code')['text'] == '' || !isset(get_option('ca_inline_banner_code')['text'])){
+			$warn_html = ca_default_inline_banner();
+		}else{
+			$warn_html = get_option('ca_inline_banner_code')['text'];
+		}
+		return ca_inline_banner_js($warn_html, $content, admin_url( 'admin-ajax.php' ));
+	}
+
+	//retunrn js banner code and jquery modal with prefedined html/css or default
+	function ca_modal($content){
+		//this is the jquery pop up case(inline banner is always inline with this)
+		if(ctype_space(get_option('ca_inline_banner_code')['text']) || get_option('ca_inline_banner_code')['text'] == '' || !isset(get_option('ca_inline_banner_code')['text'])){
+			$warn_html = ca_default_inline_banner();
+		}else{
+			$warn_html = get_option('ca_inline_banner_code')['text'];
+		}
+
+		if(ctype_space(get_option('ca_modal_code')['text']) || get_option('ca_modal_code')['text'] == '' || !isset(get_option('ca_modal_code')['text'])){
+			$modal_html = ca_default_modal();
+		}else{
+			$modal_html = get_option('ca_modal_code')['text'];
+		}
+
+		return ca_modal_js($warn_html, $content, admin_url( 'admin-ajax.php' ), $modal_html);
 	}
 
 	//log adblock user
@@ -67,7 +103,8 @@ Author URI:
 		register_setting('ca_options', 'ca_alert_text', 'ca_options_text_callback');
 		register_setting('ca_options', 'ca_alert_redirect', 'ca_options_callback');
 		register_setting('ca_options', 'ca_inline_banner_code', 'ca_options_callback');
-		register_setting('ca_options', 'ca_alert_redirect_url', 'ca_options_callback');
+		register_setting('ca_options', 'ca_modal_code', 'ca_options_callback');
+		register_setting('ca_options', 'ca_alert_redirect_url', 'ca_options_text_callback');
 		register_setting('ca_options', 'ca_global_lock', 'ca_options_callback');
 	}
 

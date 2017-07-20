@@ -6,6 +6,7 @@
 #exTab2 textarea.textarea-code{
 	width: 400px;
 	height: 300px;
+	float: right;
 }
 
 #exTab2 textarea.textarea-alert{
@@ -46,8 +47,28 @@ td.label-hint{
 	display: block;
 }
 
+.radio-type .block-control{
+	display: block;
+}
+
+.block-control p{
+	display: inline;
+}
+
 #myChart{
 	margin-top: 15px;
+	width: 250px;
+	height: 150px;
+}
+
+.ab-stats{
+	border: 1px solid #bcbaba;
+	border-radius: 5px;
+	padding: 5px;
+}
+
+#ab-stats-1 .stats-heading{
+	border-bottom: 1px solid #bcbaba;
 }
 
 button.btn-clear-data{
